@@ -1,29 +1,35 @@
 
-# Notes
-
-## Datatypes
+# Types
     - Token
-        - a typed value
     - Expression
-        - a list of Tokens and a dictionary of properties
     - Context
-        - a set of Expressions
 
-## Resolvers (token-level interpretation)
-    - Token, Context -> Context
-    - (what subset of Context does a Token evoke?)
-    - functions which take an input and return a subset of the BlockGraph
-    - for example, "find block with id"
+# Functions
 
-## Linkers (expression-level interpretation)
-    - Expression/Sub-Context, Context -> Context
-    - (what subset of Context is relevant to a given Expression?)
-    - functions which take a block and its context and return a related subset of the BlockGraph
-    - some linkers just aggregate the graphs resolved to by Tokens
-        - but others rely on more contextual information (like position in the Graph)
-    - for example, "find children of block"
+## Parsing-Related
+    - tokenize
+    - parse
 
-## Mutators
-    - Context + relevant args -> Context
-    - Functions which take an ExpressionGraph, perform edits to it, and return a modified ExpressionGraph
+## Context Utilities
+    - get_links_to
+    - sort_by_property
+
+## Property Parsers
+    - Expression -> Union[int, str]
+    - parse_id
+    - parse_indent
+
+## Resolvers
+    - Union[int, str], Context -> Context
+    - resolve_id
+    - resolve_reference
+
+## Focus-Shifters
+    - Context, Context -> Context
+    - get_references
+    - get_parent
+        - get_exp_parent
+    - get_children
+        - get_exp_children
+
 
