@@ -5,32 +5,57 @@ This project consists of 3 main parts:
 
 
 # Types
-- Token
-- Expression
-- Context
+
+## Token
+`:: Tuple[str, str]`
+
+Tokens represent typed values. They're comprable to ["morphemes"](https://en.wikipedia.org/wiki/Morpheme) in linguistics; the smallest units of meaning in a language.
+
+## Content
+`:: List[Token]`
+
+Content represents an ordered sequence of Tokens. It's comparable to an [expression](https://en.wikipedia.org/wiki/Sentence_(linguistics)) in linguistics. However, content only represents the abstract idea of a series of Tokens, rather than an instated instance of an expression.
+
+## Properties
+`:: Dict[str, Union[number, str]]`
+
+Properties represent information about an object as it occurs in a context. Properties are not determined by the actual substance/content of an object; they are determined by how the object stands in relation to other objects and its environment. For example, the physical location of an object in space is a property of the object because its location is not determined by the object itself, but by the space it exists within.
+
+## Expression
+`:: Tuple[Content, Properties]`
+
+An expression represents an instatiated peice of content: it is a content with properties because its been  instantiated in an environment
+
+## Graph
+`:: List[Expression]`
 
 # Functions
 
-## Parsing-Related
-- tokenize
-- parse
+## tokenize
+`:: str => Content`
 
-## Property Parsers
-`:: Expression => Union[int, str]`
-- parse_id
-- parse_indent
+## parse
+`:: List[str] => Graph`
 
-## Context Utilities
-- get_links_to
-- sort_by_property
+## parse_id
+`:: Expression => str`
+
+## parse_indent
+`:: Expression => int`
+
+## get_links_to
+`:: Graph, Graph, Transformer => Graph`
+
+## sort_by_property
+`:: Graph, str => List[Expression]`
 
 ## Resolvers
-`:: Union[int, str], Context => Context`
+`:: Union[int, str], Graph => Graph`
 - resolve_id
 - resolve_reference
 
-## Focus-Shifters
-`:: Context, Context => Context`
+## Transformers
+`:: Graph, Graph => Graph`
 - get_references
 - get_parent
     - get_exp_parent
