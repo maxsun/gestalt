@@ -3,6 +3,8 @@ This project consists of 3 main parts:
 - a plaintext-to-context parser
 - a Graphql API + server
 
+
+# Definitions:
 1. strings are structured atoms (not expressions or graphs!)
 2. tokens are strings paired with a set of tagged types: `:: Tuple[str, Set[Type]]`
 3. tokens are extracted from strings using some type of pattern/constraint matching
