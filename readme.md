@@ -3,6 +3,20 @@ This project consists of 3 main parts:
 - a plaintext-to-context parser
 - a Graphql API + server
 
+1. strings are structured atoms (not expressions or graphs!)
+2. tokens are strings paired with a set of tagged types: `:: Tuple[str, Set[Type]]`
+3. tokens are extracted from strings using some type of pattern/constraint matching
+   1. fault tolerance is imporant in tokenization -- strings with unknown types should still be tokenized in some way
+   2. tokens are the smallest meaningful units; single pieces of data, in context
+4. expressions are structures of tokens
+   1. (and atoms?) unsure
+   2. e
+5. graphs are structures of expressions
+6. transforms are mappings between subgraphs within the same graph
+7. resolvers are mappings from expressions to a subgraph within a graph
+
+
+
 
 # Types
 
