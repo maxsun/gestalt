@@ -20,3 +20,5 @@ Like you’re trying to navigate in the dark, and you only occasionally get meas
 Atomic information comes from direct contact with a wall. Composite information comes from reasoning that there is probably more wall immediately adjacent to the wall you have atomic information of.
 
 **Metadata** is the data implicitly included with a piece of data — its basic contextualizing information. Without metadata, a piece of data has no context and is therefore nonsense. The source or type of a piece of information is an example of metadata.
+
+Metadata can only be known by the parser.
