@@ -1,8 +1,22 @@
+Information & Data
 
-# Information
+1. **Information** is the resolution of uncertainty
+1. Information only exists in context; it’s the resolution of uncertainty about the context
+1. **Data** are measurements or approximations of the context or some subset of it. The form of this measurement/approximation can take on many forms— language, electric signals, images, even very loose approximations, like weighing an object by placing it in a tub of water and watching the surface rise.
+1. Data becomes information when we can relate the measurement to the context.
 
-Something is informative if it reduces an observer’s uncertainty about the world. Consequently, something can only be informative when it exists in a greater context with other things which it can provide information about.
+Types of Information: Atomic & Composite
+1. **Atomic** pieces of information are non-structural readings. In other words, they are readings which presuppose no relationships — they are pure observations of state.
+1. **Composite** pieces of information are structural and rely on known relationships between subsets of the context. - Conditional probabilities, for example, are composite information.
+1. By manipulating the context and measurement tools, one can convert atoms into composites and vice-versa; a complex idea is compressed into an atom, an additional measurement allows an atom to be expanded into a composite
+1. Whether the information provided by an individual piece of data is atomic or composite is context-sensitive
 
-Contexts exist both physically and mentally — they are simply mediums which possess relationships between subsets/subspaces of themselves. A context is an individual state of some type of system — continuous or discrete. Often times, the entire state of the system is too complex to have full knowledge (or it’s continuous). In these cases, we only have partial information about the system’s state. However, we can additionally receive other partial states and gradually gain a better picture of the context, or we can learn patterns in states and eventually gain the ability to extract more information from partial states than was previously possible.
+Formally, a context is a set of variables and their domains, representing approximations of the context’s exact state. The context also allows relationships (such as conditional probability) to be defined between variables in the domain (giving rise to composite information).
 
-Uncertainty in a context arises from potential relationships between parts of the context that have not been ruled out. What constitutes a piece of information is subjective to an interpreter (aka relative to a context). It’s some type of signal which can enter the context and reduce its entropy.
+You can think of the context as a set of questions about the world, and their potential answers. As well as a set of relationships between the questions which allows you to rule out answers to one question from the answer to another.
+
+Like you’re trying to navigate in the dark, and you only occasionally get measurements indicating where the walls are. You then use your existing knowledge of the word to make estimations about where the walls actually are. You also have existing knowledge that the measurements you make by touch are distinct from the measurements derived from sounds; you know how to apply reasoning to different types of measurements.
+
+Atomic information comes from direct contact with a wall. Composite information comes from reasoning that there is probably more wall immediately adjacent to the wall you have atomic information of.
+
+**Metadata** is the data implicitly included with a piece of data — its basic contextualizing information. Without metadata, a piece of data has no context and is therefore nonsense. The source or type of a piece of information is an example of metadata.
