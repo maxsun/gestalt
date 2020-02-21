@@ -52,7 +52,7 @@ class Context(ObjectType):
 
     expressions = List(Expression)
     id = String()
-    children = lambda: Context()
+    children = Field(lambda: Context)
 
     def resolve_expressions(parent, info):
         r = []
@@ -64,7 +64,7 @@ class Context(ObjectType):
         return parser.parse_id(parent)
 
     def resolve_children(parent, info):
-        return parser.get_children(parser.context, parent)
+        return parser.get_children(parent, parser.context)
 
 
 class Query(ObjectType):

@@ -102,6 +102,8 @@ TOKEN_REGEX = {
 context = parse(re.split(r'(\s*\-.*\n)', '''
 - Hello [[World]]
 - Goodbye [[Moon]]
+    - [[Sun]]
+        - is very bright
 - The [[Moon]] orbits the [[World]]
     - Our [[World]] is called [[Earth]]
     - Pretty \\cool
@@ -116,17 +118,23 @@ def sort_by_property(context: Context, prop_name: str) -> List[Expression]:
     return list(sorted(context, key=lambda x: x.properties[prop_name]))
 
 
-def parse_id(exp: Expression) -> str:
+def parse_expression_id(exp: Expression) -> str:
     '''Returns a consistent hash for an expression'''
     return str(hash(exp))
+ 
+
+def parse_id(ctx: Context) -> str:
+    '''Returns a consistent hash for a context'''
+    return ':'.join([parse_expression_id(exp) for exp in ctx])
 
 
 def resolve_id(_id: str, ctx: Context) -> Context:
     '''Returns the subset of <ctx> with <_id>'''
+    results = []
     for exp in ctx:
-        if parse_id(exp) == _id:
-            return frozenset([exp])
-    return frozenset()
+        if parse_expression_id(exp) in _id.split(':'):
+            results.append(exp)
+    return frozenset(results)
 
 
 def resolve_reference(ref_value: str, ctx: Context) -> Context:
@@ -210,6 +218,8 @@ def get_links_to(subcontext: Context, ctx: Context, link_func: Linker) -> Contex
     return frozenset(linked)
 
 
-for exp in sort_by_property(context, 'index'):
-    print(parse_id(exp), exp)
+
+# print('----')
+# a = resolve_reference('[[Sun]]', context)
+# pprint(get_children(a, context))
 
