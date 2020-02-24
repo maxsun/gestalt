@@ -2,6 +2,7 @@ from graphene import ObjectType, String, Schema, Field, List, Int
 import graphene
 from graphene.test import Client
 import note as parser
+from note import context, resolve_id
 
 
 # class Block(ObjectType):
@@ -36,8 +37,8 @@ class Expression(ObjectType):
 
     content = List(Token)
     prop = Field(String, key=String())
-    
-    parent = List(lambda: Expression)
+    plaintext = String()
+    id = String()
 
     def resolve_content(parent, info):
         print(parent)
@@ -47,12 +48,22 @@ class Expression(ObjectType):
         # print('!!!!!!!')
         return parent.properties[key]
 
+    def resolve_plaintext(parent, info):
+        return ''.join([x.value for x in parent.content])
+
+    def resolve_id(parent, info):
+        return parser.parse_expression_id(parent)
+
 
 class Context(ObjectType):
 
     expressions = List(Expression)
     id = String()
+
     children = Field(lambda: Context)
+    parent = Field(lambda: Context)
+
+    references = Field(lambda: Context)
 
     def resolve_expressions(parent, info):
         r = []
@@ -66,13 +77,47 @@ class Context(ObjectType):
     def resolve_children(parent, info):
         return parser.get_children(parent, parser.context)
 
+    def resolve_parent(parent, info):
+        return parser.get_parent(parent, parser.context)
+
+    def resolve_references(parent, info):
+        return parser.get_references(parent, parser.context)
+
+
+
+class ContextType(ObjectType):
+    class Meta:
+        model = Context
+
+
+
+class UpdateContext(graphene.Mutation):
+
+    id = String()
+    expressions = List(Expression)
+
+    class Arguments:
+        id = String()
+
+
+    def mutate(self, info, id):
+        ctx = parser.resolve_id(id, parser.context)
+        return UpdateContext(
+            id=id,
+            expressions=ctx)
+
 
 class Query(ObjectType):
     allIds = List(String)
-    context = Field(Context, id=String())
+    context = Field(Context, id=String(), ref=String())
+    parse = Field(Context, text=String())
 
-    def resolve_context(parent, info, id):
-        return parser.resolve_id(id, parser.context)
+    def resolve_context(parent, info, id=None, ref=None):
+        if id:
+            return parser.resolve_id(id, parser.context)
+        if ref:
+            return parser.resolve_reference(ref, parser.context)
+        return parser.context
 
     def resolve_allIds(parent, info):
         ids = []
@@ -80,5 +125,12 @@ class Query(ObjectType):
             ids.append(parser.parse_expression_id(exp))
         return ids
 
+    def resolve_parse(parent, info, text):
+        return parser.parse([text], parser.TOKEN_REGEX)
 
-schema = Schema(query=Query)
+
+class Mutate(ObjectType):
+    update_context = UpdateContext.Field()
+
+
+schema = Schema(query=Query, mutation=Mutate)

@@ -218,8 +218,23 @@ def get_links_to(subcontext: Context, ctx: Context, link_func: Linker) -> Contex
     return frozenset(linked)
 
 
+def sum_ctx(ctx1: Context, ctx2: Context) -> Context:
+    '''Returns <ctx1> + <ctx2>'''
+    return ctx1.union(ctx2)
+
+def subtract_ctx(ctx1: Context, ctx2: Context) -> Context:
+    '''Returns <ctx1> - <ctx2>'''
+    return ctx1 - ctx2
+
 
 # print('----')
 # a = resolve_reference('[[Sun]]', context)
 # pprint(get_children(a, context))
 
+exp = list(context)[3]
+e_id = parse_expression_id(exp)
+print(e_id)
+a = resolve_id(e_id, context)
+n = Expression(tokenize('- Goodbye [[Moon]] !!!!', TOKEN_REGEX), exp.properties)
+context = sum_ctx(subtract_ctx(context, a), frozenset([n]))
+print(parse_id(context))
