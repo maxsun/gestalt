@@ -29,3 +29,36 @@ a - b = a.intersection(b).union(a)
 **Relations** are functions which take 2 Structures ("Context" and "Argument") as arguments and returns a subset of the Context Structure:
 ```Relation :: Structure, Structure -> Structure```
 
+## Examples
+
+```python3
+def _and(ctx: Structure, arg: Structure) -> Structure:
+  fst = arg.get('fst) == ctx.take(['True'])
+  snd = arg.get('snd') == ctx.take(['True'])
+  return ctx.take(['True']) if fst and snd else ctx.take(['False'])
+
+def _or(ctx: Structure, arg: Structure) -> Structure:
+  fst = arg.get('fst) == ctx.get('True')
+  snd = arg.get('snd') == ctx.get('True')
+  return ctx.take(['True']) if fst or snd else ctx.take(['False'])
+
+ops = Structure({
+  'and': _and,
+  'or': _or
+})
+
+bools = Structure({
+  'True': lambda ctx, arg: Structure({}),
+  'False': lambda ctx, arg: Structure({}),
+})
+
+my_context = ops + bools
+x = Structure({
+  'fst': lambda ctx, arg: ctx.take(['True']),
+  'snd': lambda ctx, arg: ctx.take(['False'])
+})
+
+print(my_context.get('and', x)) # False
+print(my_context.get('or', x)) # True
+
+```
