@@ -1,24 +1,64 @@
-Information & Data
+*"Any road followed precisely to its end leads precisely nowhere. Climb the mountain just a little bit to test that it’s a mountain. From the top of the mountain, you cannot see the mountain."* -Dune
 
-1. **Information** is the resolution of uncertainty
-1. Information only exists in context; it’s the resolution of uncertainty about the context
-1. **Data** are measurements or approximations of the context or some subset of it. The form of this measurement/approximation can take on many forms— language, electric signals, images, even very loose approximations, like weighing an object by placing it in a tub of water and watching the surface rise.
-1. Data becomes information when we can relate the measurement to the context.
+# Hollow Mountain
+A functional, context-sensitive model of information.
 
-Types of Information: Atomic & Composite
-1. **Atomic** pieces of information are non-structural readings. In other words, they are readings which presuppose no relationships — they are pure observations of state.
-1. **Composite** pieces of information are structural and rely on known relationships between subsets of the context. - Conditional probabilities, for example, are composite information.
-1. By manipulating the context and measurement tools, one can convert atoms into composites and vice-versa; a complex idea is compressed into an atom, an additional measurement allows an atom to be expanded into a composite
-1. Whether the information provided by an individual piece of data is atomic or composite is context-sensitive
+## Types:
+```python
+Relation = Callable[[Structure, Structure], Structure]
+NamedRelation = Tuple[str, Relation]
+Structure = Set[NamedRelation]
+```
 
-Formally, a context is a set of variables and their domains, representing approximations of the context’s exact state. The context also allows relationships (such as conditional probability) to be defined between variables in the domain (giving rise to composite information).
+A **Structure** is a collection of named relations between subsets of itself.
+Each name is unique per Structure.
 
-You can think of the context as a set of questions about the world, and their potential answers. As well as a set of relationships between the questions which allows you to rule out answers to one question from the answer to another.
+The contents of a Context can be accessed in 3 ways:
 
-Like you’re trying to navigate in the dark, and you only occasionally get measurements indicating where the walls are. You then use your existing knowledge of the word to make estimations about where the walls actually are. You also have existing knowledge that the measurements you make by touch are distinct from the measurements derived from sounds; you know how to apply reasoning to different types of measurements.
+  1. `ctx[name]`: returns the Relation in `ctx` with `name`.
+  2. `get(ctx, name, arg) = ctx[name](ctx, arg)`: returns the result of calling the Relation with `name` in `ctx`.
+  3. `take(ctx, [names])`: returns a subset of the Context with name in `[names]`.
 
-Atomic information comes from direct contact with a wall. Composite information comes from reasoning that there is probably more wall immediately adjacent to the wall you have atomic information of.
 
-**Metadata** is the data implicitly included with a piece of data — its basic contextualizing information. Without metadata, a piece of data has no context and is therefore nonsense. The source or type of a piece of information is an example of metadata.
+Two Structures *a* and *b* can be combined to produce a **sum** (a + b) or **difference** (a - b).
+```python
+a + b = a.union(b)
+a - b = a.intersection(b).union(a)
+```
 
-Metadata can only be known by the parser.
+**Relations** are functions which take 2 Structures ("Context" and "Argument") as arguments and returns a subset of the Context Structure:
+```Relation :: Structure, Structure -> Structure```
+
+## Examples
+
+```python3
+def _and(ctx: Structure, arg: Structure) -> Structure:
+  fst = arg.get('fst) == ctx.take(['True'])
+  snd = arg.get('snd') == ctx.take(['True'])
+  return ctx.take(['True']) if fst and snd else ctx.take(['False'])
+
+def _or(ctx: Structure, arg: Structure) -> Structure:
+  fst = arg.get('fst) == ctx.get('True')
+  snd = arg.get('snd') == ctx.get('True')
+  return ctx.take(['True']) if fst or snd else ctx.take(['False'])
+
+ops = Structure({
+  'and': _and,
+  'or': _or
+})
+
+bools = Structure({
+  'True': lambda ctx, arg: Structure({}),
+  'False': lambda ctx, arg: Structure({}),
+})
+
+my_context = ops + bools
+x = Structure({
+  'fst': lambda ctx, arg: ctx.take(['True']),
+  'snd': lambda ctx, arg: ctx.take(['False'])
+})
+
+print(my_context.get('and', x)) # False
+print(my_context.get('or', x)) # True
+
+```
