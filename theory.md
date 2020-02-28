@@ -18,100 +18,35 @@ Therefore, we must also have a set of possible answers, `A`.
 
 **Lemma (3):** Without context, information cannot occur. Because information is a reduction in uncertainty, there must be preexisting information with uncertainty to reduce.
 
-**Definition** "Context" is a pair `(Q, A)`, whose uncertainty is reduced by a piece of information.
-
-**Definition:** A "piece of information" relative to a context is a pair `(Q, A)` whose answers are more specific than the context's.
-
-Formally, `x=(Q1, A1)` is informative relative to context `c=(Q2, A2)` *if and only if* `Q1 = Q2` and `A1 <is a subset of> A2`.
-
-**Lemma (4):** since an answer to question `Q` is a piece of information which informs on `Q`, an answer to a question is a pair `(Q, A)`. 
-
-Therefore, we see that `A` is a set of `(Q, A)` pairs. Formally, a pair is:
-```python
-A = Set[Pair]
-Pair = (Question, A)
+**Context** is a pair `(Q, A)`, whose uncertainty is reduced by a piece of information.
+```
+Context = Tuple[Question, Answer]
 ```
 
-This "Pair" type will be the basis of Information Structures. They represent the bare building blocks of information.
-
-
-## Types
-There are 4 types of Information Structures:
-
-### Order-1: All questions answers are atomic.
-
-```python
-S = [
-  ('red', []),
-  ('green', []),
-  ('blue', [])
-]
+ A **piece of information** relative to a context is a pair `(Q, A)` whose answers are a subset of the context's -- therefore less ambiguous.
+```
+Let x = (Q_1, A_1)
+Let y = (Q_2, A_2)
+# Info(a, c) implies that 'a' is informative to 'c'.
+Info(x, y) <=> Q_1 = Q_2 && A_1 < A_2
 ```
 
-Example: “You can only reference things”
+**Lemma (4):** since an answer to question `Q` is a piece of information which informs on `Q`, an answer to a question is also a pair: `(Q, A)`. Therefore, we see that `A` is a set of `(Q, A)` pairs.
 
-### Order-2: Questions are nested recursively.
-It’s possible to express relationships between questions.
-```python
-S = [
-  ('name', [
-    [
-      ('first', [('George', [])]),
-      ('last',[('Washington', [])])
-    ],
-    [
-      ('first', [('John', [])]),
-      ('last',[('Adams', [])])
-    ],
-  ])
-]
-```
+The prevalence of the Question-Answer pairs and their role as both questions and answers reflects the fundamental nature of their structure. As we will see, they are the building blocks of information. For this reason, we define:
 
-### Order-3: The answer to a question can be a reference to another question.
-```python
-S = [
-  ('John F. Kennedy', [
-    ('Nickname', [('JFK', [])])
-  ]),
-  ('35th President', ['@John F. Kennedy'])
-] 
-```
-It’s now possible to structure questions in multiple ways.
-```python
-S = [
-  ('bools', [
-    ('True', []),
-    ('False', [])
-  ]),
-  ('x', [
-    ('fst', ['@True']),
-    ('snd', ['@False'])
-  ]),
-  ('y', [
-    ('fst', ['@False']),
-    ('snd', ['@False'])
-  ])
-]
-```
-### Order-4: The question of a question can be a reference.
+**Information Structure:** a Name and a corresponding set of nested Information Structures: `InformationStructure = (ID, Set[InformationStructure])`. This basic structure is isomorphic to the Question-Answer pairs, and -- with a few additions -- can be used for describing all types of information.
 
-It is now possible to describe the external relationships of a piece of information.
-```python
-S = [
-  ('bools', [
-    ('True', []),
-    ('False', [])
-  ]),
-  ('x', [
-    ('fst', ['@True']),
-    ('snd', ['@False'])
-  ]),
-  ('and', [
-    ('@x', ['@False']),
-  ]),
-  ('or', [
-    ('@x', ['@True']),
-  ]),
-]
+With this model, we are able to construct descriptions of many things:
 ```
-Only in Order-4 Structures is it possible to describe something from both the outside, and the inside.
+('Person', [
+	('Name', [('John', [])]),
+	('Age', [('21', [])]),
+	('Inventory', [
+		('working lantern', []),
+		('broken lantern', []),
+	])
+])
+```
+In this model, we represent a Person who has a name, age, and inventory, which contain atoms representing their possible values. This represents the possibility that his inventory contains either a "working lantern" or a "broken lantern".
+
