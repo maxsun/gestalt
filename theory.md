@@ -40,98 +40,76 @@ There are 4 types of Information Structures:
 
 ```python
 S = [
-  (red, []),
-  (green, []),
-  (blue, [])
+  ('red', []),
+  ('green', []),
+  ('blue', [])
 ]
 ```
 
 Example: “You can only reference things”
 
 ### Order-2: Questions are nested recursively.
-```
+It’s possible to express relationships between questions.
+```python
 S = [
-  (name, [
-    [(first, [
-                (George, [])
-              ]),
-      (last,[
-                (Washington, [])
-              ])],
-     [(first, [
-                (John, [])
-              ]),
-      (last,[
-                (Adams, [])
-              ])],
+  ('name', [
+    [
+      ('first', [('George', [])]),
+      ('last',[('Washington', [])])
+    ],
+    [
+      ('first', [('John', [])]),
+      ('last',[('Adams', [])])
+    ],
   ])
 ]
 ```
-It’s possible to express relationships between questions.
 
 ### Order-3: The answer to a question can be a reference to another question.
-```
+```python
 S = [
-  (John F. Kennedy, [
-    (Nickname, [
-      (JFK, [])
-    ])
+  ('John F. Kennedy', [
+    ('Nickname', [('JFK', [])])
   ]),
-  (35th President, [@John F. Kennedy])
+  ('35th President', ['@John F. Kennedy'])
 ] 
 ```
 It’s now possible to structure questions in multiple ways.
-```
+```python
 S = [
-  (bools, [
-    (True, []),
-    (False, [])
+  ('bools', [
+    ('True', []),
+    ('False', [])
   ]),
-  (x, [
-     (fst, [
-        @True
-      ]),
-      (snd, [
-        @False
-      ])
-   ]),
-  (y, [
-     (fst, [
-        @False
-      ]),
-      (snd, [
-        @False
-      ])
-   ])
+  ('x', [
+    ('fst', ['@True']),
+    ('snd', ['@False'])
+  ]),
+  ('y', [
+    ('fst', ['@False']),
+    ('snd', ['@False'])
+  ])
 ]
 ```
-Order-4: The question of a question can be a reference.
+### Order-4: The question of a question can be a reference.
 
 It is now possible to describe the external relationships of a piece of information.
-```
+```python
 S = [
-  (bools, [
-    (True, []),
-    (False, [])
+  ('bools', [
+    ('True', []),
+    ('False', [])
   ]),
-  (x, [
-     (fst, [
-        @True
-      ]),
-      (snd, [
-        @False
-      ])
-   ]),
-  (and, [
-     (@x, [
-        @False
-      ]),
-   ]),
-  (or, [
-     (@x, [
-        @True
-      ]),
-   ]),
+  ('x', [
+    ('fst', ['@True']),
+    ('snd', ['@False'])
+  ]),
+  ('and', [
+    ('@x', ['@False']),
+  ]),
+  ('or', [
+    ('@x', ['@True']),
+  ]),
 ]
 ```
 Only in Order-4 Structures is it possible to describe something from both the outside, and the inside.
