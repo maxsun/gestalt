@@ -1,42 +1,44 @@
+
 # What is an Information Structure?
 
-A **structure** is a representation of a set of objects with some additional facilities allowing it to be treated as a single object.
-
-```python
-Operations = Set[Callable[[Structure(s)], Structure]]
-Structure = Tuple[Set, Operations]
-```
-
-The following argues that an **Information Structure** is a structure in which each object is a Question-Answer pair.
-
-```python
-Pair = (Question, Set[Pair])
-Operations = Set[Callable[[Structure(s)], Structure]]
-Information Structure = Tuple[Set[Pair], Operations]
-```
-
-It is important to remember that the formal representations are representations of metaphysical structures which are instantiated elsewhere in the world. The instances themselves are the physical manifestations of information in the world; the brain, for example.
+An **Information Structure** is an abstract model of information manifestations.  
+Information, or the resolution of uncertainty, lies at the heart of communication and computation -- but in order for information to occur in the world, it must have some type of manifestation which facilitates both uncertainty, and its resolution. This Information Structure model supplies a formal representation of both of these requirements; allowing it to be used to model any process involving the interpretation, extraction, or communication of information.
 
 ## Construction:
-1. Information is the resolution of uncertainty.
-2. You can only have uncertainty by also having a question to be uncertain of.
 
-Formally, we have Q — representing the question — and A — representing a set of possible answers to the question.
-For example, we could have the question, “Who lives in that house?” and possible answers, “Alice,” “Brooks,” or “Ludwig.” A gain of information would reduce the number of possible answers, thus reducing the amount of uncertainty. The answer “Alice” is more specific than the answer “Alice or Brooks.”
+**Definition:** "Information" is the resolution of uncertainty.
 
-3. A piece of information relative to a question (Q, A) is a subset of A, which reduces Q’s uncertainty.
-4. A alone is not informative. Without context, A is meaningless. Here, we rely on Frege’s Context Principle: only ask for the meaning of something in context.
-Therefore, a piece of information must be a pair (Q, A).
+**Lemma (1):** You can only have uncertainty by also having a question to be uncertain of.
 
-5. By providing a question Q, we contextualize A and make it informative about a Context, (Q, A).
-The information pair’s answers are a subset of the contextual pair’s answers (making it informative relative the context).
+Therefore, we must have a question `Q`. 
 
-6. Now it is clear that a Question is a pair (Q, A), and an Answer (or piece of information relative to a question) is also a pair (Q, A).
+**Lemma (2):** Without choices to choose between, you cannot have uncertainty.
+
+Therefore, we must also have a set of possible answers, `A`.
+
+**Lemma (3):** Without context, information cannot occur. Because information is a reduction in uncertainty, there must be preexisting information with uncertainty to reduce.
+
+**Definition** "Context" is a pair `(Q, A)`, whose uncertainty is reduced by a piece of information.
+
+**Definition:** A "piece of information" relative to a context is a pair `(Q, A)` whose answers are more specific than the context's.
+
+Formally, `x=(Q1, A1)` is informative relative to context `c=(Q2, A2)` *if and only if* `Q1 = Q2` and `A1 <is a subset of> A2`.
+
+**Lemma (4):** since an answer to question `Q` is a piece of information which informs on `Q`, an answer to a question is a pair `(Q, A)`. 
+
+Therefore, we see that `A` is a set of `(Q, A)` pairs. Formally, a pair is:
+```python
+A = Set[Pair]
+Pair = (Question, A)
+```
+
+This "Pair" type will be the basis of Information Structures. They represent the bare building blocks of information.
+
 
 ## Types
 There are 4 types of Information Structures:
 
-### Order-1: All questions are atomic.
+### Order-1: All questions answers are atomic.
 
 ```python
 S = [
