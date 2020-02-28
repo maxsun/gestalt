@@ -35,7 +35,11 @@ Info(x, y) <=> Q_1 = Q_2 && A_1 < A_2
 
 The prevalence of the Question-Answer pairs and their role as both questions and answers reflects the fundamental nature of their structure. As we will see, they are the building blocks of information. For this reason, we define:
 
-**Information Structure:** a Name and a corresponding set of nested Information Structures: `InformationStructure = (ID, Set[InformationStructure])`. This basic structure is isomorphic to the Question-Answer pairs, and -- with a few additions -- can be used for describing all types of information.
+**Information Structure:** a Name and a corresponding set of nested Information Structures:
+
+```InformationStructure = (ID, Set[InformationStructure])```
+
+This basic structure is isomorphic to the Question-Answer pairs, and -- with a few additions -- can be used for describing all types of information.
 
 With this model, we are able to construct descriptions of many things:
 ```
