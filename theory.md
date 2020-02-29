@@ -1,115 +1,56 @@
+
 # What is an Information Structure?
 
-A **structure** is a representation of a set of objects with some additional facilities allowing it to be treated as a single object.
-
-```python
-Operations = Set[Callable[[Structure(s)], Structure]]
-Structure = Tuple[Set, Operations]
-```
-
-The following argues that an **Information Structure** is a structure in which each object is a Question-Answer pair.
-
-```python
-Pair = (Question, Set[Pair])
-Operations = Set[Callable[[Structure(s)], Structure]]
-Information Structure = Tuple[Set[Pair], Operations]
-```
-
-It is important to remember that the formal representations are representations of metaphysical structures which are instantiated elsewhere in the world. The instances themselves are the physical manifestations of information in the world; the brain, for example.
+An **Information Structure** is an abstract model of information manifestations.  
+Information, or the resolution of uncertainty, lies at the heart of communication and computation -- but in order for information to occur in the world, it must have some type of manifestation which facilitates both uncertainty, and its resolution. This Information Structure model supplies a formal representation of both of these requirements; allowing it to be used to model any process involving the interpretation, extraction, or communication of information.
 
 ## Construction:
-1. Information is the resolution of uncertainty.
-2. You can only have uncertainty by also having a question to be uncertain of.
 
-Formally, we have Q — representing the question — and A — representing a set of possible answers to the question.
-For example, we could have the question, “Who lives in that house?” and possible answers, “Alice,” “Brooks,” or “Ludwig.” A gain of information would reduce the number of possible answers, thus reducing the amount of uncertainty. The answer “Alice” is more specific than the answer “Alice or Brooks.”
+**Definition:** "Information" is the resolution of uncertainty.
 
-3. A piece of information relative to a question (Q, A) is a subset of A, which reduces Q’s uncertainty.
-4. A alone is not informative. Without context, A is meaningless. Here, we rely on Frege’s Context Principle: only ask for the meaning of something in context.
-Therefore, a piece of information must be a pair (Q, A).
+**Lemma (1):** You can only have uncertainty by also having a question to be uncertain of.
 
-5. By providing a question Q, we contextualize A and make it informative about a Context, (Q, A).
-The information pair’s answers are a subset of the contextual pair’s answers (making it informative relative the context).
+Therefore, we must have a question `Q`. 
 
-6. Now it is clear that a Question is a pair (Q, A), and an Answer (or piece of information relative to a question) is also a pair (Q, A).
+**Lemma (2):** Without choices to choose between, you cannot have uncertainty.
 
-## Types
-There are 4 types of Information Structures:
+Therefore, we must also have a set of possible answers, `A`.
 
-### Order-1: All questions are atomic.
+**Lemma (3):** Without context, information cannot occur. Because information is a reduction in uncertainty, there must be preexisting information with uncertainty to reduce.
 
-```python
-S = [
-  ('red', []),
-  ('green', []),
-  ('blue', [])
-]
+**Context** is a pair `(Q, A)`, whose uncertainty is reduced by a piece of information.
+```
+Context = Tuple[Question, Answer]
 ```
 
-Example: “You can only reference things”
-
-### Order-2: Questions are nested recursively.
-It’s possible to express relationships between questions.
-```python
-S = [
-  ('name', [
-    [
-      ('first', [('George', [])]),
-      ('last',[('Washington', [])])
-    ],
-    [
-      ('first', [('John', [])]),
-      ('last',[('Adams', [])])
-    ],
-  ])
-]
+ A **piece of information** relative to a context is a pair `(Q, A)` whose answers are a subset of the context's -- therefore less ambiguous.
+```
+Let x = (Q_1, A_1)
+Let y = (Q_2, A_2)
+# Info(a, c) implies that 'a' is informative to 'c'.
+Info(x, y) <=> Q_1 = Q_2 && A_1 < A_2
 ```
 
-### Order-3: The answer to a question can be a reference to another question.
-```python
-S = [
-  ('John F. Kennedy', [
-    ('Nickname', [('JFK', [])])
-  ]),
-  ('35th President', ['@John F. Kennedy'])
-] 
-```
-It’s now possible to structure questions in multiple ways.
-```python
-S = [
-  ('bools', [
-    ('True', []),
-    ('False', [])
-  ]),
-  ('x', [
-    ('fst', ['@True']),
-    ('snd', ['@False'])
-  ]),
-  ('y', [
-    ('fst', ['@False']),
-    ('snd', ['@False'])
-  ])
-]
-```
-### Order-4: The question of a question can be a reference.
+**Lemma (4):** since an answer to question `Q` is a piece of information which informs on `Q`, an answer to a question is also a pair: `(Q, A)`. Therefore, we see that `A` is a set of `(Q, A)` pairs.
 
-It is now possible to describe the external relationships of a piece of information.
-```python
-S = [
-  ('bools', [
-    ('True', []),
-    ('False', [])
-  ]),
-  ('x', [
-    ('fst', ['@True']),
-    ('snd', ['@False'])
-  ]),
-  ('and', [
-    ('@x', ['@False']),
-  ]),
-  ('or', [
-    ('@x', ['@True']),
-  ]),
-]
+The prevalence of the Question-Answer pairs and their role as both questions and answers reflects the fundamental nature of their structure. As we will see, they are the building blocks of information. For this reason, we define:
+
+**Information Structure:** a Name and a corresponding set of nested Information Structures:
+
+```InformationStructure = (ID, Set[InformationStructure])```
+
+This basic structure is isomorphic to the Question-Answer pairs, and -- with a few additions -- can be used for describing all types of information.
+
+With this model, we are able to construct descriptions of many things:
 ```
-Only in Order-4 Structures is it possible to describe something from both the outside, and the inside.
+('Person', [
+	('Name', [('John', [])]),
+	('Age', [('21', [])]),
+	('Inventory', [
+		('working lantern', []),
+		('broken lantern', []),
+	])
+])
+```
+In this model, we represent a Person who has a name, age, and inventory, which contain atoms representing their possible values. This represents the possibility that his inventory contains either a "working lantern" or a "broken lantern".
+
