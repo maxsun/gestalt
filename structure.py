@@ -1,49 +1,88 @@
-
-from __future__ import annotations
-from os import name
-from typing import List, Callable, Dict, Set, Tuple, Optional, Union
-from dataclasses import dataclass
+'''The Representation Model'''
+from typing import DefaultDict, Iterable, FrozenSet, NamedTuple, Optional, Set
 from functools import reduce
+from collections import defaultdict
+
+RepSet = FrozenSet['Rep']
+
+class Rep(NamedTuple):
+    '''The Representation dataclass'''
+    name: str
+    content: RepSet = frozenset()
 
 
-@dataclass(frozen=True)
-class Structure:
-    '''Represents a context'''
-    content: Set[Tuple[str, 'Relation']]
-
-    def __getitem__(self, key: str) -> Set[Relation]:
-        results = set([])
-        for named_rel in self.content:
-            if named_rel[0] == key:
-                results.add(named_rel[1])
-        return results
-
-    def get(self, key: str, arg: Optional[Structure]=None, ctx: Optional[Structure]=None) -> Structure:
-        if arg is None:
-            arg = Structure(set())
-        if ctx is None:
-            ctx = self
-        try:
-            a = Structure(set())
-            for f in self[key]:
-                a += f(ctx, arg)
-            return a
-        except KeyError:
-            return Structure(set())
-
-    def take(self, keys: List[str], arg: Optional[Structure]=None) -> Structure:
-        results = set([])
-        for named_rel in self.content:
-            if named_rel[0] in keys:
-                results.add(named_rel)
-        return Structure(results)
-
-    def __add__(self, other: Structure) -> Structure:
-        return Structure(self.content.union(other.content))
-
-    def __sub__(self, other: Structure) -> Structure:
-        return Structure(self.content.intersection(other.content).union(self.content))
+def repset(items: Optional[Iterable[Rep]] = None) -> RepSet:
+    '''Helper function to build a RepSet from an iterable of Reps, <items>'''
+    if items is None:
+        return frozenset()
+    contents = set()
+    for rep in items:
+        contents.add(Rep(rep.name, repset(rep.content)))
+    return frozenset(contents)
 
 
-Relation = Callable[[Structure, Structure], Structure]
+def is_atomic(rep: Rep) -> bool:
+    '''Returns whether or not <rep> has content'''
+    return len(rep.content) == 0
 
+
+def repset_get(rset: RepSet, name: str, recursive: bool = True) -> RepSet:
+    '''Returns the sub-structure(s) with name = <name>'''
+    results = set()
+    for rep in rset:
+        if recursive:
+            results = results.union(repset_get(rep.content, name, recursive))
+        if rep.name == name:
+            results.add(rep)
+    return repset(results)
+
+
+def repset_sum(set_a: RepSet, set_b: RepSet) -> RepSet:
+    '''Returns the sum of two RepSets'''
+    content_groups: DefaultDict[str, Set[Rep]] = defaultdict(set)
+    for rep in set_a.union(set_b):
+        content_groups[rep.name].add(rep)
+
+    results = set()
+    for name in content_groups:
+        all_content = [x.content for x in content_groups[name]]
+        accum_content = reduce(repset_sum, all_content, repset())
+        results.add(Rep(name, accum_content))
+    return repset(results)
+
+
+def repset_difference(set_a: RepSet, set_b: RepSet) -> RepSet:
+    '''Returns the difference between two RepSets'''
+    results = set()
+    for rep in set_a:
+        if not is_atomic(rep):
+            for rep2 in repset_get(set_b, rep.name):
+                results.add(Rep(rep.name, repset_difference(rep.content, rep2.content)))
+        elif rep.name not in [x.name for x in set_b]:
+            results.add(rep)
+
+    return repset(results)
+
+x1 = repset([
+    Rep('x', repset([
+                Rep('1', repset()),
+                Rep('2', repset()),
+                ])),
+    Rep('y', repset([
+                Rep('a'),
+                Rep('b'),
+                ]))
+        ,])
+
+x2 = repset([
+    Rep('x', repset([
+                Rep('3', repset()),
+                ])),
+    Rep('y', repset([
+                Rep('c'),
+                ]))
+        ,])
+
+diff = repset_difference(repset_sum(x1, x2), x2)
+print(diff)
+# print(repset_get(diff, 'x'))
