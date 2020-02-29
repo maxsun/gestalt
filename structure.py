@@ -1,11 +1,15 @@
 '''The Representation Model'''
-from typing import DefaultDict, Iterable, FrozenSet, NamedTuple, Optional, Set
+from typing import DefaultDict, Iterable, FrozenSet, Optional, Set
 from functools import reduce
 from collections import defaultdict
+from dataclasses import dataclass
+
 
 RepSet = FrozenSet['Rep']
 
-class Rep(NamedTuple):
+
+@dataclass(frozen=True)
+class Rep:
     '''The Representation dataclass'''
     name: str
     content: RepSet = frozenset()
@@ -16,52 +20,53 @@ def repset(items: Optional[Iterable[Rep]] = None) -> RepSet:
     if items is None:
         return frozenset()
     contents = set()
-    for rep in items:
-        contents.add(Rep(rep.name, repset(rep.content)))
+    for item in items:
+        contents.add(Rep(item.name, repset(item.content)))
     return frozenset(contents)
 
 
-def is_atomic(rep: Rep) -> bool:
+def is_atomic(r: Rep) -> bool:
     '''Returns whether or not <rep> has content'''
-    return len(rep.content) == 0
+    return len(r.content) == 0
 
 
-def repset_get(rset: RepSet, name: str, recursive: bool = True) -> RepSet:
+def repset_get(rset: RepSet, name: str) -> RepSet:
     '''Returns the sub-structure(s) with name = <name>'''
-    results = set()
-    for rep in rset:
-        if recursive:
-            results = results.union(repset_get(rep.content, name, recursive))
-        if rep.name == name:
-            results.add(rep)
-    return repset(results)
+    return repset(filter(
+        lambda r: r.name == name,
+        rset
+    ))
+
+def repset_names(rset: RepSet) -> Set[str]:
+    '''Returns names of the first-children of <rset>'''
+    return set([r.name for r in rset])
 
 
 def repset_sum(set_a: RepSet, set_b: RepSet) -> RepSet:
     '''Returns the sum of two RepSets'''
-    content_groups: DefaultDict[str, Set[Rep]] = defaultdict(set)
-    for rep in set_a.union(set_b):
-        content_groups[rep.name].add(rep)
+    content_groups: DefaultDict[str, Set[RepSet]] = defaultdict(set)
+    for r in set_a.union(set_b):
+        content_groups[r.name].add(r.content)
 
     results = set()
-    for name in content_groups:
-        all_content = [x.content for x in content_groups[name]]
-        accum_content = reduce(repset_sum, all_content, repset())
-        results.add(Rep(name, accum_content))
+    for name in repset_names(set_a).union(repset_names(set_b)):
+        results.add(
+            Rep(name, reduce(repset_sum, content_groups[name], repset()))
+            )
     return repset(results)
 
 
-def repset_difference(set_a: RepSet, set_b: RepSet) -> RepSet:
+def repset_sub(set_a: RepSet, set_b: RepSet) -> RepSet:
     '''Returns the difference between two RepSets'''
     results = set()
-    for rep in set_a:
-        if not is_atomic(rep):
-            for rep2 in repset_get(set_b, rep.name):
-                results.add(Rep(rep.name, repset_difference(rep.content, rep2.content)))
-        elif rep.name not in [x.name for x in set_b]:
-            results.add(rep)
-
+    for rep1 in set_a:
+        if not is_atomic(rep1):
+            for rep2 in repset_get(set_b, rep1.name):
+                results.add(Rep(rep1.name, repset_sub(rep1.content, rep2.content)))
+        elif len(repset_get(set_b, rep1.name)) == 0:
+            results.add(rep1)
     return repset(results)
+
 
 x1 = repset([
     Rep('x', repset([
@@ -83,6 +88,5 @@ x2 = repset([
                 ]))
         ,])
 
-diff = repset_difference(repset_sum(x1, x2), x2)
+diff = repset_sub(repset_sum(x1, x2), x2)
 print(diff)
-# print(repset_get(diff, 'x'))
