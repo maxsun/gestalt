@@ -47,4 +47,37 @@ atomic = [
   ]
 ```
 
+We can express complex relationships in this way
+```python
+true = [('True', lambda _: [])]
+false = [('False', lambda _: [])]
+bools = true + false
+
+x = [
+    ()
+]
+```
+
 Essentially, a Stance may either present an entirely new Perspective, or it may state something about existing ones.
+
+```
+snow is snow
+"snow" is snow
+snow is "snow"
+"snow" is "smow"
+
+========
+Snow is white.
+Snow is literally white.
+
+"Snow" is white.
+The word "Snow" is the color white. This doesn't make sense.
+
+Snow is "white".
+Snow is the definition of what it means to be white.
+
+"Snow" is "white".
+In the abstract sense, snow is white.
+The definition of snow is the definition of white.
+```
+
