@@ -76,6 +76,13 @@ Information provided in any way other than these 3 is either a mistake or a prio
 Abstract information requires the ability to **refer** to Topics in order to describe relationships between them.
 Critically, reference is context-sensitive.
 
+We now have a general notion of Perspectives, which allow us to model Uncertainties and the resolution of uncertainty.
+But we still must attach this model to their physical manifestations or representations.
+
+We must refocus on the fact that our goal is to have a method for describing Informative Representations.
+Representations are identified within greater pieces of information. A Representation may have instantiations with distinct forms. Also, though, different Representations can provide the same Information. And, the same Representation can provide different Information in different contexts.
+
+
 
 ```
 snow is snow
